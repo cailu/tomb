@@ -1,4 +1,3 @@
-# coding:utf-8
 import os
 import random
 import functools
@@ -16,8 +15,9 @@ class Generator(Singleton):
     LOCATION = list()
     NAMES = list()
     BANKS = list()
-    MOBILES = list()
+    PHONE = list()
     BANK_BIN = {}
+    MOBILE_ADDRESS = {}
 
     def __init__(self):
         self._read()
@@ -27,7 +27,7 @@ class Generator(Singleton):
             ('location.csv', self._parse_location, self.LOCATION),
             ('names.txt', self._parse_names, self.NAMES),
             ('bin.csv', self._parse_bank_bin, self.BANKS),
-            ('mobile.csv', self._parse_mobile, self.MOBILES),
+            ('phone.csv', self._parse_phone, self.PHONE),
         ]
         path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         for filename, method, target in rules:
@@ -62,11 +62,14 @@ class Generator(Singleton):
         tks = line.strip().split(',')
         return [tks[0], tks[1]]
 
-    def _parse_mobile(self, line):
+    def _parse_phone(self, line):
+        # phone7, address, company, address_code
         tks = line.strip().split(',')
-        if tks[0].isdigit() is False:
-            return None
-        return [tks[0], tks[1], tks[2]]
+        if len(tks) == 3:
+            extra = None
+        else:
+            extra = ' '.join(tks[3:])
+        return [tks[0], tks[1], tks[2], extra]
 
     @classmethod
     def _build_bank_bin(cls):
@@ -78,11 +81,25 @@ class Generator(Singleton):
             else:
                 cls.BANK_BIN[alias] = [bin, ]
 
-    def generate(self,):
+    @classmethod
+    def _build_mobile_address(cls):
+        if cls.MOBILE_ADDRESS:
+            return
+
+    def generate(self, data):
         name = random.choice(self.NAMES)
-        identity, area = self.generate_identity()
-        card_no, card_org = self.generate_cardnum()
-        mobile = self.generate_phone()
+        home = data.get('home', True)  # 身份证和手机号同一归属地
+        while True:
+            mobile = self.generate_phone()
+            if home is False:
+                break
+            if mobile[-1] is not None:
+                break
+        age = (int(data['age_min']), int(data['age_max']))
+        addr_code = mobile[-1]
+        identity, area = self.generate_identity(age, addr_code if home else None)
+        bank_org = data.get('bank_org', '')
+        card_no, card_org = self.generate_cardnum(bank_org=bank_org)
         ret = {
             'name': name,
             'identity': identity,
@@ -95,14 +112,19 @@ class Generator(Singleton):
         }
         return ret
 
-    def generate_identity(self, age=(20, 30)):
+    def generate_identity(self, age=(20, 30), addr_code=None):
         '''
             6位数字地址码
             8位数字出生日期码
             3位数字顺序码  同一天出生的顺序号 奇数表示男 偶数表示女
             1位校验码
         '''
-        area = random.choice(self.LOCATION)
+        if addr_code:
+            acode = random.choice(addr_code.split())
+            locations = [loc for loc in self.LOCATION if loc[0].startswith(acode)]
+        else:
+            locations = self.LOCATION
+        area = random.choice(locations)
         now = pendulum.now()
         tstart = now.subtract(years=age[1])
         tstop = now.subtract(years=age[0])
@@ -113,10 +135,13 @@ class Generator(Singleton):
         vcode = self.identity_verify_code(pre)
         return pre + vcode, area[1]
 
-    def generate_cardnum(self):
+    def generate_cardnum(self, bank_org='ICBC'):
         self._build_bank_bin()
-        bank_org = 'ICBC'
-        bin = random.choice(self.BANK_BIN[bank_org])
+        bank_org = bank_org.upper()
+        if bank_org in self.BANK_BIN:
+            bin = random.choice(self.BANK_BIN[bank_org])
+        else:
+            bin = random.choice(self.BANK)[0]
         body = ''.join([str(random.randint(0, 9999)).zfill(4) for _ in range(3)])
         pre = bin + body
         vcode = self.bank_card_verify_code(pre)
@@ -128,7 +153,7 @@ class Generator(Singleton):
             '2': '中国电信',
             '3': '中国移动',
         }
-        mobile = random.choice(self.MOBILES)
+        mobile = random.choice(self.PHONE)
         mobile[0] = mobile[0] + str(random.randint(0, 9999)).zfill(4)
         mobile[2] = company.get(mobile[2], '')
         return mobile
@@ -169,4 +194,10 @@ class Generator(Singleton):
 if __name__ == '__main__':
     for _ in range(10):
         gtor = Generator()
-        print(gtor.generate())
+        data = {
+            'age_min': random.choice([20, 30]),
+            'age_max': random.choice([30, 40]),
+            'bank_org': random.choice(['ICBC', 'ABC', 'None']),
+            'home': random.choice([True, False]),
+        }
+        print(gtor.generate(data))
