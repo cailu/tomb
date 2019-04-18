@@ -86,10 +86,10 @@ class Generator(Singleton):
         ret = {
             'name': name,
             'identity': identity,
-            'area': area,
+            'address': area,
             'bank_card_no': card_no,
             'bank_card_org': card_org,
-            'phone': mobile[0],
+            'phone_num': mobile[0],
             'phone_address': mobile[1],
             'phone_company': mobile[2],
         }
