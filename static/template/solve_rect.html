@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <meta charset="utf-8"/>
+    <script type="text/javascript">
+        function drawCircle(cx, cy, style) {
+            let canvas = document.getElementById('canvas');
+            if (!canvas || !canvas.getContext) {
+                return false;
+            }
+            let radius = 18;
+            let context = canvas.getContext('2d');
+            context.beginPath();
+            context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
+            context.fillStyle = style
+            context.fill();
+            context.lineWidth = 1;
+            context.strokeStyle = style
+            context.stroke();
+        }
+
+        let colors = {
+            "A": "gray",
+            "B": "aqua",
+            "C": "hotpink",
+            "D": "lawngreen",
+            "E": "darkviolet",
+            "F": "pink",
+            "G": "darkblue",
+            "H": "orange",
+            "I": "snow",
+            "K": "yellow",
+            "J": "green",
+            "L": "red"
+        };
+
+        function shift(p) {
+            return 40 * parseInt(p) + 45;
+        }
+
+        function draw() {
+            let rows = document.getElementsByTagName("tr");
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i].cells;
+                let x = shift(row[0].textContent);
+                let y = shift(row[1].textContent);
+                let color = colors[row[2].textContent];
+                drawCircle(y, x, color);
+            }
+        }
+
+        function printMousePos(event) {
+            let x = event.clientX;
+            let y = event.clientY;
+            if (x > 30 && x < 470 && y > 65 && y < 270 ) {
+                let i = Math.floor((event.clientX - 45) / 40) + 1;
+                let j = Math.floor((event.clientY - 45) / 40) + 1;
+                let cnt = j + 10 * (i - 1) - (i - 2)* (i - 1) / 2;
+                //document.getElementById("p").innerText = "x=" + x + " y=" + y +  " i=" + i + " j=" + j + " cnt=" + cnt;
+                let rows = document.getElementsByTagName("tr");
+                let block = rows[cnt-1].cells[2].textContent;
+                let href = window.location.protocol + "//" + window.location.host + window.location.pathname + "?block=" + block
+                window.location.replace(href)
+            }
+        }
+        document.addEventListener("click", printMousePos);
+    </script>
+</head>
+<body onload="draw()">
+<canvas id="canvas" width="500" height="350" style="background-color:lightsteelblue;"></canvas>
+<table id="data" style="visibility: hidden">
+    
+    <tr>
+        <td>1</td>
+        <td>0</td>
+        <td>K</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>1</td>
+        <td>K</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>D</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>3</td>
+        <td>D</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>4</td>
+        <td>D</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>5</td>
+        <td>D</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>6</td>
+        <td>B</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>7</td>
+        <td>B</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>8</td>
+        <td>A</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>9</td>
+        <td>F</td>
+    </tr>
+    
+    <tr>
+        <td>1</td>
+        <td>10</td>
+        <td>F</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>0</td>
+        <td>K</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>1</td>
+        <td>K</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>2</td>
+        <td>H</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>3</td>
+        <td>H</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>4</td>
+        <td>D</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>5</td>
+        <td>B</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>6</td>
+        <td>B</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>7</td>
+        <td>B</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>8</td>
+        <td>A</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>9</td>
+        <td>E</td>
+    </tr>
+    
+    <tr>
+        <td>2</td>
+        <td>10</td>
+        <td>F</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>0</td>
+        <td>G</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>1</td>
+        <td>H</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>2</td>
+        <td>H</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>3</td>
+        <td>L</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>4</td>
+        <td>I</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>5</td>
+        <td>I</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>6</td>
+        <td>C</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>7</td>
+        <td>A</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>8</td>
+        <td>A</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>9</td>
+        <td>E</td>
+    </tr>
+    
+    <tr>
+        <td>3</td>
+        <td>10</td>
+        <td>E</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>0</td>
+        <td>G</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>1</td>
+        <td>H</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>2</td>
+        <td>L</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>3</td>
+        <td>L</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>4</td>
+        <td>L</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>5</td>
+        <td>I</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>6</td>
+        <td>C</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>7</td>
+        <td>C</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>8</td>
+        <td>C</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>9</td>
+        <td>C</td>
+    </tr>
+    
+    <tr>
+        <td>4</td>
+        <td>10</td>
+        <td>E</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>0</td>
+        <td>G</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>1</td>
+        <td>G</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>2</td>
+        <td>G</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>3</td>
+        <td>L</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>4</td>
+        <td>I</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>5</td>
+        <td>I</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>6</td>
+        <td>J</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>7</td>
+        <td>J</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>8</td>
+        <td>J</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>9</td>
+        <td>J</td>
+    </tr>
+    
+    <tr>
+        <td>5</td>
+        <td>10</td>
+        <td>E</td>
+    </tr>
+    
+</table>
+</body>
+</html>
+

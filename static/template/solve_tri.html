@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <meta charset="utf-8"/>
+    <script type="text/javascript">
+        function drawCircle(cx, cy, style) {
+            let canvas = document.getElementById('canvas');
+            if (!canvas || !canvas.getContext) {
+                return false;
+            }
+            let radius = 18;
+            let context = canvas.getContext('2d');
+            context.beginPath();
+            context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
+            context.fillStyle = style
+            context.fill();
+            context.lineWidth = 1;
+            context.strokeStyle = style
+            context.stroke();
+        }
+
+        let colors = {
+            "A": "gray",
+            "B": "aqua",
+            "C": "hotpink",
+            "D": "lawngreen",
+            "E": "darkviolet",
+            "F": "pink",
+            "G": "darkblue",
+            "H": "orange",
+            "I": "snow",
+            "K": "yellow",
+            "J": "green",
+            "L": "red"
+        };
+
+        function shift(p) {
+            return 40 * parseInt(p) + 45;
+        }
+
+        function draw() {
+            let rows = document.getElementsByTagName("tr");
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i].cells;
+                let x = shift(row[0].textContent);
+                let y = shift(row[1].textContent);
+                let color = colors[row[2].textContent];
+                drawCircle(x, y, color);
+            }
+        }
+
+        function printMousePos(event) {
+            let x = event.clientX;
+            let y = event.clientY;
+            if (x > 33 && x < 430 && y > 33 && y < 430 && x + y < 475) {
+                let i = Math.floor((event.clientX - 45) / 40) + 1;
+                let j = Math.floor((event.clientY - 45) / 40) + 1;
+                let cnt = j + 10 * (i - 1) - (i - 2)* (i - 1) / 2;
+                let rows = document.getElementsByTagName("tr");
+                let block = rows[cnt-1].cells[2].textContent;
+                let href = window.location.protocol + "//" + window.location.host + window.location.pathname + "?block=" + block
+                window.location.replace(href)
+            }
+        }
+        document.addEventListener("click", printMousePos);
+    </script>
+</head>
+<body onload="draw()">
+<canvas id="canvas" width="450" height="450" style="background-color:lightsteelblue;"></canvas>
+<table id="data" style="visibility: hidden">
+    {% for tr in tables %}
+    <tr>
+        <td>{{tr.0}}</td>
+        <td>{{tr.1}}</td>
+        <td>{{tr.2}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

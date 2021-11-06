@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'tomb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'static/template')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,9 +76,13 @@ WSGI_APPLICATION = 'tomb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'family',
+        'USER': 'cailu',
+        'PASSWORD': '001bfd2ccaf5eafac9db6d6fc9d680c2211a515a',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        }
 }
 
 
